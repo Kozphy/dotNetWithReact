@@ -1,11 +1,22 @@
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
+
 // this will create Kestrel server and read configuration file
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
+// allow cors name
+string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+// add allow cors to Services
+builder.Services.AddCors(options => {
+    options.AddPolicy(name: MyAllowSpecificOrigins, policy => {
+        policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
+    });
+});
+
+// Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -16,6 +27,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSqlServer<DataContext>(builder.Configuration.GetConnectionString("DefaultConnection"));
 
 var app = builder.Build();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

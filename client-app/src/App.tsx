@@ -1,30 +1,40 @@
-import React from "react";
-import logo from "./logo.svg";
-import "./App.css";
+import React, { useState, useEffect } from "react";
+import "./App.scss";
 import { ducks } from "./demo";
 import DuckItem from "./Duckitem";
+import axios from "axios";
+import Button from "react-bootstrap/Button";
+import ListGroup from "react-bootstrap/ListGroup";
+import * as Icon from "react-bootstrap-icons";
 
 function App() {
+  const [activities, setActivties] = useState<any>([]);
+
+  useEffect(() => {
+    axios.get("http://localhost:5000/api/activities").then((response) => {
+      console.log(response);
+      if (response.status === 200) {
+        setActivties(response.data);
+      } else {
+        throw new Error(response.status.toString());
+      }
+    });
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <>
-          {ducks.map((duck) => (
-            <DuckItem duck={duck} key={duck.name}></DuckItem>
-          ))}
-        </>
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <Icon.PeopleFill></Icon.PeopleFill>
+        <Button variant="primary">Primary</Button>
+        <ListGroup>
+          {activities.map((activity: any) => {
+            return (
+              <ListGroup.Item key={activity.id}>
+                {activity.title}
+              </ListGroup.Item>
+            );
+          })}
+        </ListGroup>
       </header>
     </div>
   );
