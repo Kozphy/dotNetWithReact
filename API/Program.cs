@@ -1,3 +1,5 @@
+using Application.Activities;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -15,6 +17,8 @@ builder.Services.AddCors(options => {
         policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
     });
 });
+
+builder.Services.AddMediatR(typeof(List.Handler));
 
 // Add services to the container.
 builder.Services.AddControllers();
