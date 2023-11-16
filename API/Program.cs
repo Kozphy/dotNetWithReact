@@ -18,7 +18,12 @@ builder.Services.AddCors(options => {
     });
 });
 
-builder.Services.AddMediatR(typeof(List.Handler));
+builder.Services.AddMediatR(
+    cfg =>
+    {
+        cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+    }
+);
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -28,7 +33,9 @@ builder.Services.AddSwaggerGen();
 
 // dotnet add package Microsoft.EntityFrameworkCore.SqlServer
 // using Microsoft.EntityFrameworkCore;
-builder.Services.AddSqlServer<DataContext>(builder.Configuration.GetConnectionString("DefaultConnection"));
+builder.Services.AddSqlServer<DataContext>(
+    builder.Configuration.GetConnectionString("DefaultConnection")
+);
 
 var app = builder.Build();
 
@@ -50,10 +57,12 @@ app.MapControllers();
 // Start migration
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
+
 try{
     var context = services.GetRequiredService<DataContext>();
     // because we use async Seed, we need to use MigrateAcync here
     await context.Database.MigrateAsync();
+
     // start seeding data to database table
     await Seed.SeedData(context);
 }catch(Exception ex){
