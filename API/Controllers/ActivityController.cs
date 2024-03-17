@@ -20,15 +20,13 @@ namespace API.Controllers
         [HttpGet] //api/activities
         public async Task<ActionResult<List<Activity>>> GetActivities()
         {
-            return  await _context.Activities.ToListAsync();
+            return await _context.Activities.ToListAsync();
         }
 
         [HttpGet("{id}")] //api/activities/{id}
-        public  async Task<ActionResult<Activity>> GetActivity(Guid id)
+        public async Task<ActionResult<Activity>> GetActivity(Guid id)
         {
             return await _context.Activities.FindAsync(id);
         }
-
-        
     }
 }
